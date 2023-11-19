@@ -2,12 +2,16 @@ package com.jaredsantiag.backendcartapp.controllers;
 
 import com.jaredsantiag.backendcartapp.models.entities.Product;
 import com.jaredsantiag.backendcartapp.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -34,13 +38,21 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Product product){
+    public ResponseEntity<?> create(@Valid @RequestBody Product product, BindingResult result){
+        if(result.hasErrors()){
+           return validation(result);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(product));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> create(@RequestBody Product product, @PathVariable Long id){
+    public ResponseEntity<?> create(@Valid @RequestBody Product product, BindingResult result,@PathVariable Long id){
+        if(result.hasErrors()){
+            return validation(result);
+        }
+
         Optional<Product> o = service.update(product, id);
+
         if(o.isPresent()){
             return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
         }
@@ -56,5 +68,14 @@ public class ProductController {
             return  ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private ResponseEntity<?> validation(BindingResult result) {
+        Map<String, String> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err ->{
+            errors.put(err.getField(), "El campo "+err.getField()+" "+err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 }

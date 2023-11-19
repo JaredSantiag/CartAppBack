@@ -1,6 +1,7 @@
 package com.jaredsantiag.backendcartapp.models.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name="products")
@@ -10,10 +11,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String name;
 
+    @NotEmpty
     private String description;
 
+    @NotNull
+    @Min(20)
     private Long price;
 
     public Long getId() {
