@@ -38,8 +38,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             username = user.getUsername();
             password = user.getPassword();
 
-            logger.info("Username desde request InputStream (raw) "+username);
-            logger.info("Password desde request InputStream (raw) "+password);
         } catch (StreamReadException e) {
             throw new RuntimeException(e);
         } catch (DatabindException e) {
@@ -49,7 +47,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
-        return authenticationManager.authenticate(null);
+        return authenticationManager.authenticate(authToken);
     }
 
     @Override
@@ -62,7 +60,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader("Authorization","Bearer"+token);
         Map<String, Object> body = new HashMap<>();
         body.put("token",token);
-        body.put("message", String.format("Hola $s, has iniciado sesion con exito!",username));
+        body.put("message", String.format("Hola %s, has iniciado sesion con exito!",username));
         body.put("username", username);
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(200);
