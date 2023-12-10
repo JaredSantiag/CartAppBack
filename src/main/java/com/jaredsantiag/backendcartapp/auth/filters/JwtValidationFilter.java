@@ -15,30 +15,32 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException;
 import java.util.*;
 
-public class JwtValidateFilter extends BasicAuthenticationFilter {
+import static com.jaredsantiag.backendcartapp.auth.TokenJwtConfig.*;
 
-    public JwtValidateFilter(AuthenticationManager authenticationManager) {
+public class JwtValidationFilter extends BasicAuthenticationFilter {
+
+    public JwtValidationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader("Authorization");
+        String header = request.getHeader(HEADER_AUTHORIZATION);
 
-        if(header == null || !header.startsWith("Bearer ")){
+        if(header == null || !header.startsWith(PREFIX_TOKEN)){
             chain.doFilter(request, response);
             return;
         }
 
-        String token = header.replace("Bearer ","");
+        String token = header.replace(PREFIX_TOKEN,"");
         byte[] tokenDecodeBytes = Base64.getDecoder().decode(token);
         String tokenDecode = new String(tokenDecodeBytes);
 
-        String[] tokenArr = tokenDecode.split(".");
+        String[] tokenArr = tokenDecode.split("\\.");
         String secret = tokenArr[0];
         String username = tokenArr[1];
 
-        if("algun_token_con_alguna_frase_secreta".equals(secret)){
+        if(SECRET_KEY.equals(secret)){
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 

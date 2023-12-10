@@ -1,6 +1,7 @@
 package com.jaredsantiag.backendcartapp.auth;
 
 import com.jaredsantiag.backendcartapp.auth.filters.JWTAuthenticationFilter;
+import com.jaredsantiag.backendcartapp.auth.filters.JwtValidationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products").permitAll()
                         .anyRequest().authenticated())
                 .addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
+                .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .csrf(config -> config.disable())
                 .sessionManagement(managment -> managment.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
