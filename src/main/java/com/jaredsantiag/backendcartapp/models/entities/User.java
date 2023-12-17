@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @Entity
 @Table(name="users")
 public class User {
@@ -27,6 +29,15 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})}
+    )
+    private List<Role> roles;
 
     public Long getId() {
         return id;
@@ -58,5 +69,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }
