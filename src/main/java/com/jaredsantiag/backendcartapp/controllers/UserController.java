@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.jaredsantiag.backendcartapp.models.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,16 +35,16 @@ public class UserController {
     private UserService service;
 
     @GetMapping
-    public List<User> list() {
+    public List<UserDTO> list() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
-        Optional<User> userOptionl = service.findById(id);
+        Optional<UserDTO> userOptional = service.findById(id);
 
-        if (userOptionl.isPresent()) {
-            return ResponseEntity.ok(userOptionl.orElseThrow());
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(userOptional.orElseThrow());
         }
         return ResponseEntity.notFound().build();
     }
@@ -61,7 +62,7 @@ public class UserController {
         if(result.hasErrors()){
             return validation(result);
         }
-        Optional<User> o = service.update(user, id);
+        Optional<UserDTO> o = service.update(user, id);
         
         if (o.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
@@ -71,7 +72,7 @@ public class UserController {
     
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable Long id) {
-        Optional<User> o = service.findById(id);
+        Optional<UserDTO> o = service.findById(id);
 
         if (o.isPresent()) {
             service.remove(id);
