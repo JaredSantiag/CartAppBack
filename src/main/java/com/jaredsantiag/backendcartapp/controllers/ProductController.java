@@ -4,6 +4,9 @@ import com.jaredsantiag.backendcartapp.models.entities.Product;
 import com.jaredsantiag.backendcartapp.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,6 +28,12 @@ public class ProductController {
     @GetMapping
     public List<Product> list(){
         return service.findAll();
+    }
+
+    @GetMapping("/page/{page}")
+    public Page<Product> list(@PathVariable Integer page){
+        Pageable pageable = PageRequest.of(page, 5);
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")

@@ -3,6 +3,8 @@ package com.jaredsantiag.backendcartapp.services;
 import com.jaredsantiag.backendcartapp.models.entities.Product;
 import com.jaredsantiag.backendcartapp.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,12 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public List<Product> findAll() {
         return (List<Product>) repository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override
