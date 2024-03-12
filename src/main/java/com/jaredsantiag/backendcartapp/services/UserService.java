@@ -13,7 +13,10 @@ public interface UserService {
 
     Optional<UserDTO> findById(Long id);
 
+    Optional<User> findByUsername(String username);
+
     UserDTO save(User user);
+
     Optional<UserDTO> update(UserRequest user, Long id);
 
     void remove(Long id);
