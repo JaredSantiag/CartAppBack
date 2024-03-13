@@ -1,8 +1,8 @@
 package com.jaredsantiag.backendcartapp.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -16,8 +16,9 @@ public class Order {
     private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "REGIST_DATE", nullable = false)
-    private Calendar orderDate;
+    @Column(name = "order_date", nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date orderDate;
     public Long getId() {
         return id;
     }
@@ -34,11 +35,11 @@ public class Order {
         this.user = user;
     }
 
-    public Calendar getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(Calendar orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
 }
