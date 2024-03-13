@@ -3,6 +3,9 @@ package com.jaredsantiag.backendcartapp.models.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name="products")
 public class Product {
@@ -20,7 +23,10 @@ public class Product {
 
     @NotNull
     @Min(20)
-    private Long price;
+    private Double price;
+
+    @ManyToMany(mappedBy = "products")
+    private List<Order> orders = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -46,11 +52,11 @@ public class Product {
         this.description = description;
     }
 
-    public Long getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 }

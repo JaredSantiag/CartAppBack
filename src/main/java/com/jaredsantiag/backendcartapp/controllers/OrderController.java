@@ -51,6 +51,7 @@ public class OrderController {
         Order order = new Order();
         order.setOrderDate(new Date());
         order.setUser(user.orElseThrow());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(order));
     }
 
