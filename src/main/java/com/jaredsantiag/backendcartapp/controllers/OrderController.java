@@ -2,6 +2,7 @@ package com.jaredsantiag.backendcartapp.controllers;
 
 import com.jaredsantiag.backendcartapp.helpers.ValidationHelper;
 import com.jaredsantiag.backendcartapp.models.entities.Order;
+import com.jaredsantiag.backendcartapp.models.entities.Product;
 import com.jaredsantiag.backendcartapp.models.entities.User;
 import com.jaredsantiag.backendcartapp.services.OrderService;
 import com.jaredsantiag.backendcartapp.services.UserService;
@@ -44,13 +45,14 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(Principal principal){
+    public ResponseEntity<?> create(Principal principal, @RequestBody List<Product> products){
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
 
         Order order = new Order();
         order.setOrderDate(new Date());
         order.setUser(user.orElseThrow());
+        order.setProducts(products);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(order));
     }
