@@ -45,14 +45,18 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(Principal principal, @RequestBody List<Product> products){
+    public ResponseEntity<?> create(Principal principal, @RequestBody Order orderRequest){
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
 
         Order order = new Order();
         order.setOrderDate(new Date());
         order.setUser(user.orElseThrow());
-        order.setProducts(products);
+
+        if(orderRequest.getProducts().isEmpty()) {
+            return ResponseEntity.badRequest().body("Lista de productos vacia");
+        }
+        order.setProducts(orderRequest.getProducts());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(order));
     }
