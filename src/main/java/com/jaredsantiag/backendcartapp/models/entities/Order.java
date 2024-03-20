@@ -22,13 +22,8 @@ public class Order {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
 
-    @ManyToMany
-    @JoinTable(
-            name = "orders_products",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy="order")
+    private List<Item> items;
 
     public Long getId() {
         return id;
@@ -54,11 +49,11 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 }

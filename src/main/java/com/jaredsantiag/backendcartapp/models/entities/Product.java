@@ -25,8 +25,9 @@ public class Product {
     @Min(20)
     private Double price;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Order> orders = new ArrayList<>();
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Item item;
 
     public Long getId() {
         return id;
