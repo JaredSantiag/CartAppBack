@@ -1,21 +1,22 @@
 package com.jaredsantiag.backendcartapp.models.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Entity
+@Table(name="items")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="order_id", nullable=false)
+    @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToOne
-    @MapsId
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 

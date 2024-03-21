@@ -25,10 +25,10 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class OrderController {
     @Autowired
-    private UserService userService;
+    private OrderService service;
 
     @Autowired
-    private OrderService service;
+    private UserService userService;
 
     @Autowired
     private ItemService itemService;
@@ -59,30 +59,15 @@ public class OrderController {
         order.setUser(user.orElseThrow());
         service.save(order);
 
-        System.out.println("1");
         List<Item> items = orderRequest.getItems();
-
-        System.out.println("2");
-        if(items.isEmpty()) {
-            System.out.println("3");
+        if(items.isEmpty()){
             service.remove(order.getId());
-            System.out.println("4");
-            return ResponseEntity.badRequest().body("Lista de productos vacia");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty product list");
         }
 
-        System.out.println("5");
-        items.forEach((i) -> {
-            Item newItem = new Item();
-            newItem.setQuantity(i.getQuantity());
-            newItem.setPrice(i.getPrice());
-            System.out.println(i);
-            i.setOrder(order);
-            System.out.println(i);
-            itemService.save(i);
-            System.out.println("papure");
-        });
-
-        order.setItems(orderRequest.getItems());
+        items.forEach((i) -> i.setOrder(order));
+        order.setItems(items);
+        service.save(order);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }

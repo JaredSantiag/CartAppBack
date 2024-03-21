@@ -25,9 +25,8 @@ public class Product {
     @Min(20)
     private Double price;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Item item;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Item> items;
 
     public Long getId() {
         return id;

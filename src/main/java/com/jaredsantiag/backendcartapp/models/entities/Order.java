@@ -14,7 +14,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false)
     private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -22,7 +22,7 @@ public class Order {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
 
-    @OneToMany(mappedBy="order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<Item> items;
 
     public Long getId() {
