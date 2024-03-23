@@ -1,6 +1,8 @@
 package com.jaredsantiag.backendcartapp.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class Order {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JsonIgnore
     private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -23,6 +26,7 @@ public class Order {
     private Date orderDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Item> items;
 
     public Long getId() {
