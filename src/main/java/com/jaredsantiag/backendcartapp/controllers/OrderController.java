@@ -53,17 +53,17 @@ public class OrderController {
     public ResponseEntity<?> create(Principal principal, @RequestBody Order orderRequest){
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
+        List<Item> items;
+
+        if(orderRequest.getItems()==null || orderRequest.getItems().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order");
+        }
+        items = orderRequest.getItems();
 
         Order order = new Order();
         order.setOrderDate(new Date());
         order.setUser(user.orElseThrow());
         service.save(order);
-
-        List<Item> items = orderRequest.getItems();
-        if(items.isEmpty()){
-            service.remove(order.getId());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty product list");
-        }
 
         items.forEach((i) -> i.setOrder(order));
         order.setItems(items);
