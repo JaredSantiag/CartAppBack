@@ -31,7 +31,7 @@ public class ProductController {
 
     @GetMapping("/page/{page}")
     public Page<Product> list(@PathVariable Integer page){
-        Pageable pageable = PageRequest.of(page, 5);
+        Pageable pageable = PageRequest.of(page, 6);
         return service.findAll(pageable);
     }
 
