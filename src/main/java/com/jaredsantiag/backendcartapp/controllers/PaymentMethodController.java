@@ -25,6 +25,7 @@ public class PaymentMethodController {
     @Autowired
     private UserService userService;
 
+    @Autowired
     private StringEncryptor stringEncryptor;
 
     @GetMapping()
@@ -32,8 +33,22 @@ public class PaymentMethodController {
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
         List<PaymentMethod> paymentMethods = service.findByUser(user.orElseThrow());
-
+        paymentMethods.forEach((p) -> {
+            p.setCardNumber(stringEncryptor.decrypt(p.getCardNumber()));
+            p.setMonthExpiration(stringEncryptor.decrypt(p.getMonthExpiration()));
+            p.setYearExpiration(stringEncryptor.decrypt(p.getYearExpiration()));
+            p.setSecurityCode(stringEncryptor.decrypt(p.getSecurityCode()));
+        });
         return paymentMethods;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> show(@PathVariable Long id){
+        Optional<PaymentMethod> paymentMethod = service.findById(id);
+        if(paymentMethod.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(paymentMethod.orElseThrow());
     }
 
     @PostMapping()
@@ -42,6 +57,7 @@ public class PaymentMethodController {
         Optional<User> user = userService.findByUsername(username);
 
         PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setUser(user.orElseThrow());
         paymentMethod.setCardNumber(stringEncryptor.encrypt(request.getCardNumber()));
         paymentMethod.setMonthExpiration(stringEncryptor.encrypt(request.getMonthExpiration()));
         paymentMethod.setYearExpiration(stringEncryptor.encrypt(request.getYearExpiration()));
@@ -49,5 +65,15 @@ public class PaymentMethodController {
 
         service.save(paymentMethod);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentMethod);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> remove(@PathVariable Long id){
+        Optional<PaymentMethod> paymentMethod =  service.findById(id);
+        if(paymentMethod.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        service.remove(id);
+        return ResponseEntity.noContent().build();
     }
 }
