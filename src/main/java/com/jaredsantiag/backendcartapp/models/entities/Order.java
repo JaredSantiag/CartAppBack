@@ -20,6 +20,14 @@ public class Order {
     @JsonIgnore
     private User user;
 
+    @ManyToOne(optional = false)
+    @JsonIgnore
+    private Address address;
+
+    @ManyToOne(optional = false)
+    @JsonIgnore
+    private PaymentMethod paymentMethod;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "order_date", nullable = false)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -43,6 +51,22 @@ public class Order {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public Date getOrderDate() {

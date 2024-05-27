@@ -42,7 +42,7 @@ public class AddressController {
         }
 
         Address addressObj = address.get();
-        if(!addressObj.getUser().equals(user)) {
+        if(!addressObj.getUser().equals(user.get())) {
             return ResponseEntity.notFound().build();
         }
 
@@ -79,8 +79,8 @@ public class AddressController {
         }
 
         Address addressObj = address.get();
-        if(!addressObj.getUser().equals(user)) {
-            return ResponseEntity.noContent().build();
+        if(!addressObj.getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
         }
 
         service.remove(id);
