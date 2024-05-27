@@ -5,9 +5,7 @@ import com.jaredsantiag.backendcartapp.models.entities.Item;
 import com.jaredsantiag.backendcartapp.models.entities.Order;
 import com.jaredsantiag.backendcartapp.models.entities.Product;
 import com.jaredsantiag.backendcartapp.models.entities.User;
-import com.jaredsantiag.backendcartapp.services.ItemService;
-import com.jaredsantiag.backendcartapp.services.OrderService;
-import com.jaredsantiag.backendcartapp.services.UserService;
+import com.jaredsantiag.backendcartapp.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,12 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AddressService addressService;
+
+    @Autowired
+    private PaymentMethodService paymentMethodService;
 
     @Autowired
     private ItemService itemService;
@@ -60,9 +64,19 @@ public class OrderController {
         }
         items = orderRequest.getItems();
 
+        if(addressService.findById(orderRequest.getAddress().getId()).isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid address");
+        }
+
+        if(paymentMethodService.findById(orderRequest.getPaymentMethod().getId()).isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payment method");
+        }
+
         Order order = new Order();
         order.setOrderDate(new Date());
         order.setUser(user.orElseThrow());
+        order.setAddress(orderRequest.getAddress());
+        order.setPaymentMethod(orderRequest.getPaymentMethod());
         service.save(order);
 
         items.forEach((i) -> i.setOrder(order));
