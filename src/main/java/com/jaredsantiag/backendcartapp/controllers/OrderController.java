@@ -45,11 +45,18 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id){
+    public ResponseEntity<?> show(Principal principal, @PathVariable Long id){
+        String username = principal.getName();
         Optional<Order> orderOptional = service.findById(id);
+        Optional<User> user = userService.findByUsername(username);
+
         if(orderOptional.isEmpty()){
             return ResponseEntity.notFound().build();
         }
+        if(!orderOptional.get().getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(orderOptional.orElseThrow());
     }
 
@@ -87,11 +94,18 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id){
+    public ResponseEntity<?> remove(Principal principal, @PathVariable Long id){
+        String username = principal.getName();
         Optional<Order> orderOptional = service.findById(id);
+        Optional<User> user = userService.findByUsername(username);
+
         if(orderOptional.isEmpty()){
             return ResponseEntity.notFound().build();
         }
+        if(!orderOptional.get().getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
+        }
+
         service.remove(id);
         return ResponseEntity.noContent().build();
     }

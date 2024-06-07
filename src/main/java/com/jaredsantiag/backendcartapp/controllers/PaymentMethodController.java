@@ -43,11 +43,18 @@ public class PaymentMethodController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id){
+    public ResponseEntity<?> show(Principal principal, @PathVariable Long id){
+        String username = principal.getName();
         Optional<PaymentMethod> paymentMethod = service.findById(id);
+        Optional<User> user = userService.findByUsername(username);
+
         if(paymentMethod.isEmpty()){
             return ResponseEntity.notFound().build();
         }
+        if(!paymentMethod.get().getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(paymentMethod.orElseThrow());
     }
 
@@ -68,11 +75,18 @@ public class PaymentMethodController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id){
+    public ResponseEntity<?> remove(Principal principal, @PathVariable Long id){
+        String username = principal.getName();
         Optional<PaymentMethod> paymentMethod =  service.findById(id);
+        Optional<User> user = userService.findByUsername(username);
+
         if(paymentMethod.isEmpty()){
             return ResponseEntity.notFound().build();
         }
+        if(!paymentMethod.get().getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
+        }
+
         service.remove(id);
         return ResponseEntity.noContent().build();
     }

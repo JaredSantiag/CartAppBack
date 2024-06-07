@@ -40,9 +40,7 @@ public class AddressController {
         if(address.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-
-        Address addressObj = address.get();
-        if(!addressObj.getUser().equals(user.get())) {
+        if(!address.get().getUser().equals(user.get())) {
             return ResponseEntity.notFound().build();
         }
 
@@ -77,9 +75,7 @@ public class AddressController {
         if(address.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-
-        Address addressObj = address.get();
-        if(!addressObj.getUser().equals(user.get())) {
+        if(!address.get().getUser().equals(user.get())) {
             return ResponseEntity.notFound().build();
         }
 
