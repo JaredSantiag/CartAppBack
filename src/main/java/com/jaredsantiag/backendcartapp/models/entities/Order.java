@@ -21,11 +21,9 @@ public class Order {
     private User user;
 
     @ManyToOne(optional = false)
-    @JsonIgnore
     private Address address;
 
     @ManyToOne(optional = false)
-    @JsonIgnore
     private PaymentMethod paymentMethod;
 
     @Temporal(TemporalType.TIMESTAMP)
