@@ -1,5 +1,6 @@
 package com.jaredsantiag.backendcartapp.controllers;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +35,10 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    @GetMapping
-    public List<UserDTO> list() {
-        return service.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id) {
-        Optional<UserDTO> userOptional = service.findById(id);
+    @GetMapping("/me")
+    public ResponseEntity<?> show(Principal principal) {
+        String username = principal.getName();
+        Optional<User> userOptional = service.findByUsername(username);
 
         if (userOptional.isPresent()) {
             return ResponseEntity.ok(userOptional.orElseThrow());
@@ -57,12 +54,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
+    @PutMapping()
+    public ResponseEntity<?> update(Principal principal, @Valid @RequestBody UserRequest user, BindingResult result) {
+        String username = principal.getName();
+        Optional<User> userOptional = service.findByUsername(username);
+
         if(result.hasErrors()){
             return validation(result);
         }
-        Optional<UserDTO> o = service.update(user, id);
+
+        Optional<UserDTO> o = service.update(user, userOptional.get().getId());
         
         if (o.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
@@ -70,12 +71,15 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
     
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id) {
-        Optional<UserDTO> o = service.findById(id);
+    @DeleteMapping()
+    public ResponseEntity<?> remove(Principal principal) {
+        String username = principal.getName();
+        Optional<User> userOptional = service.findByUsername(username);
+
+        Optional<UserDTO> o = service.findById(userOptional.get().getId());
 
         if (o.isPresent()) {
-            service.remove(id);
+            service.remove(o.get().getId());
             return ResponseEntity.noContent().build(); // 204
         }
         return ResponseEntity.notFound().build();
