@@ -1,6 +1,7 @@
 package com.jaredsantiag.backendcartapp.models.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jaredsantiag.backendcartapp.models.IUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -40,6 +41,12 @@ public class User implements IUser {
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})}
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Address> addresses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PaymentMethod> paymentMethods;
 
     @Transient
     private boolean admin;
@@ -91,5 +98,29 @@ public class User implements IUser {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    public Long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(Long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public List<PaymentMethod> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
+        this.paymentMethods = paymentMethods;
     }
 }

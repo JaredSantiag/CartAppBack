@@ -13,7 +13,8 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 
     @NotBlank
