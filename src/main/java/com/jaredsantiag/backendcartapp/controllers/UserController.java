@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.jaredsantiag.backendcartapp.helpers.EncriptorHelper;
 import com.jaredsantiag.backendcartapp.models.dto.UserDTO;
+import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +37,21 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private StringEncryptor stringEncryptor;
+
     @GetMapping("/me")
     public ResponseEntity<?> show(Principal principal) {
         String username = principal.getName();
         Optional<User> userOptional = service.findByUsername(username);
 
         if (userOptional.isPresent()) {
+            EncriptorHelper encriptorHelper = new EncriptorHelper(stringEncryptor);
+            userOptional.get().getPaymentMethods().forEach(encriptorHelper::decryptPaymentMethod);
+
             return ResponseEntity.ok(userOptional.orElseThrow());
         }
+
         return ResponseEntity.notFound().build();
     }
     

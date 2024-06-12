@@ -1,9 +1,11 @@
 package com.jaredsantiag.backendcartapp.controllers;
 
+import com.jaredsantiag.backendcartapp.helpers.EncriptorHelper;
 import com.jaredsantiag.backendcartapp.models.entities.PaymentMethod;
 import com.jaredsantiag.backendcartapp.models.entities.User;
 import com.jaredsantiag.backendcartapp.services.PaymentMethodService;
 import com.jaredsantiag.backendcartapp.services.UserService;
+import io.micrometer.observation.Observation;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,12 +35,10 @@ public class PaymentMethodController {
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
         List<PaymentMethod> paymentMethods = service.findByUser(user.orElseThrow());
-        paymentMethods.forEach((p) -> {
-            p.setCardNumber(stringEncryptor.decrypt(p.getCardNumber()));
-            p.setMonthExpiration(stringEncryptor.decrypt(p.getMonthExpiration()));
-            p.setYearExpiration(stringEncryptor.decrypt(p.getYearExpiration()));
-            p.setSecurityCode(stringEncryptor.decrypt(p.getSecurityCode()));
-        });
+
+        EncriptorHelper encriptorHelper = new EncriptorHelper(stringEncryptor);
+        paymentMethods.forEach(encriptorHelper::decryptPaymentMethod);
+
         return paymentMethods;
     }
 
@@ -63,15 +63,13 @@ public class PaymentMethodController {
         String username = principal.getName();
         Optional<User> user = userService.findByUsername(username);
 
-        PaymentMethod paymentMethod = new PaymentMethod();
+        EncriptorHelper encriptorHelper = new EncriptorHelper(stringEncryptor);
+
+        PaymentMethod paymentMethod = encriptorHelper.encryptPaymentMethod(request);
         paymentMethod.setUser(user.orElseThrow());
-        paymentMethod.setCardNumber(stringEncryptor.encrypt(request.getCardNumber()));
-        paymentMethod.setMonthExpiration(stringEncryptor.encrypt(request.getMonthExpiration()));
-        paymentMethod.setYearExpiration(stringEncryptor.encrypt(request.getYearExpiration()));
-        paymentMethod.setSecurityCode(stringEncryptor.encrypt(request.getYearExpiration()));
 
         service.save(paymentMethod);
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentMethod);
+        return ResponseEntity.status(HttpStatus.CREATED).body(encriptorHelper.decryptPaymentMethod(paymentMethod));
     }
 
     @DeleteMapping("/{id}")
