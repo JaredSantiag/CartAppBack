@@ -10,5 +10,6 @@ public interface AddressService {
     Optional<Address> findById(Long id);
     List<Address> findByUser(User user);
     Address save(Address address);
+    Optional update(Address address, Long id);
     void remove(Long id);
 }

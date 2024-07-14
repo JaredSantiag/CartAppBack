@@ -35,6 +35,25 @@ public class AddressServiceImpl implements  AddressService{
     }
 
     @Override
+    public Optional<Address> update(Address address, Long id) {
+        Optional<Address> o = this.findById(id);
+        Address adreessOptional = null;
+
+        if(o.isPresent()){
+            Address addressDB = o.orElseThrow();
+            addressDB.setStreet(address.getStreet());
+            addressDB.setNumber(address.getNumber());
+            addressDB.setSuburb(address.getSuburb());
+            addressDB.setPostCode(address.getPostCode());
+            addressDB.setCity(address.getCity());
+            addressDB.setState(address.getState());
+            addressDB.setCountry(address.getCountry());
+            adreessOptional = this.save(addressDB);
+        }
+        return Optional.ofNullable(adreessOptional);
+    }
+
+    @Override
     @Transactional()
     public void remove(Long id) {
         repository.deleteById(id);

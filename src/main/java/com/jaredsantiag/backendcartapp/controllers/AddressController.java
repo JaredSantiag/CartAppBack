@@ -66,6 +66,27 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.CREATED).body(address);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(Principal principal, @RequestBody Address request, @PathVariable Long id){
+        String username = principal.getName();
+        Optional<User> user = userService.findByUsername(username);
+        Optional<Address> address = service.findById(id);
+
+        if(address.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        if(!address.get().getUser().equals(user.get())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Address> o = service.update(request, id);
+
+        if(o.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(o.orElseThrow());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(Principal principal, @PathVariable Long id){
         String username = principal.getName();
