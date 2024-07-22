@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.jaredsantiag.backendcartapp.models.dto.UserDTO;
 import com.jaredsantiag.backendcartapp.models.entities.User;
 import com.jaredsantiag.backendcartapp.models.request.UserRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface UserService {
     
@@ -17,7 +18,8 @@ public interface UserService {
 
     UserDTO save(User user);
 
-    Optional<UserDTO> update(UserRequest user, Long id);
+    @Transactional
+    Optional<UserDTO> update(User user, Long id);
 
     void remove(Long id);
 }

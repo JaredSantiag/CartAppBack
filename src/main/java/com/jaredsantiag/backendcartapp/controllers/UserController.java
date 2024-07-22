@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public ResponseEntity<?> update(Principal principal, @Valid @RequestBody UserRequest user, BindingResult result) {
+    public ResponseEntity<?> update(Principal principal, @Valid @RequestBody User user, BindingResult result) {
         String username = principal.getName();
         Optional<User> userOptional = service.findByUsername(username);
 
@@ -75,7 +75,7 @@ public class UserController {
         Optional<UserDTO> o = service.update(user, userOptional.get().getId());
         
         if (o.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
+            return ResponseEntity.status(HttpStatus.OK).body(o.orElseThrow());
         }
         return ResponseEntity.notFound().build();
     }

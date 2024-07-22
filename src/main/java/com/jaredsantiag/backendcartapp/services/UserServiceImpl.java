@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaredsantiag.backendcartapp.models.entities.User;
-import com.jaredsantiag.backendcartapp.models.request.UserRequest;
 import com.jaredsantiag.backendcartapp.repositories.UserRepository;
 
 @Service
@@ -66,14 +65,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Optional<UserDTO> update(UserRequest user, Long id) {
+    public Optional<UserDTO> update(User user, Long id) {
         Optional<User> o = repository.findById(id);
         User userOptional = null;
         if (o.isPresent()) {
             User userDb = o.orElseThrow();
-            userDb.setRoles(getRoles(user));
+            //userDb.setRoles(getRoles(user));
             userDb.setUsername(user.getUsername());
             userDb.setEmail(user.getEmail());
+            userDb.setPassword(passwordEncoder.encode(user.getPassword()));
+            userDb.setPhoneNumber(user.getPhoneNumber());
             userOptional = repository.save(userDb);
         }
         return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
