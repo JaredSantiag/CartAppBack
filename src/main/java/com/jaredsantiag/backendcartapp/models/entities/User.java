@@ -21,7 +21,6 @@ public class User implements IUser {
     @Column(unique = true)
     private String username;
 
-    @NotBlank
     private String password;
 
     @NotEmpty

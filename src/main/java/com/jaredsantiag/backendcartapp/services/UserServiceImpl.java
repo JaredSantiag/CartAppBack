@@ -73,8 +73,10 @@ public class UserServiceImpl implements UserService {
             //userDb.setRoles(getRoles(user));
             userDb.setUsername(user.getUsername());
             userDb.setEmail(user.getEmail());
-            userDb.setPassword(passwordEncoder.encode(user.getPassword()));
             userDb.setPhoneNumber(user.getPhoneNumber());
+            if(!user.getPassword().isEmpty()){
+                userDb.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             userOptional = repository.save(userDb);
         }
         return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
